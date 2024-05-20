@@ -11,6 +11,7 @@ Optional:
 Known bugs/features:
 - Can change gravity while grappled (feature)
 - Spamming gravity flips can cause some temporary desync of affected players
+- Trying to grab onto a rope by pressing up while with a gravity buff will concur a gravity flip instead of the vanilla rope grab, holding down will grab it the frame after flipping
 - Not dying or triggering a gravity flux while playing continiously for ~1.135 years will cause the inverted player to revert to unpolarised gravity until the next flux or death
 
 Source Code: https://github.com/Aquae/GravitySwap
