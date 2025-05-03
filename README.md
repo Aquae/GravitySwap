@@ -13,6 +13,12 @@ Optional:
 - Jumping
 - Receiving damage
 
+Recent Changes:
+- Fixed bug allowing non-vanilla gravity change prior to "gravity desync"
+- Added a countdown for the effect of the "gravity desync"
+- Customisable countdown
+- Fixed desync bug as host now syncs config to players upon joining
+
 Known bugs/features:
 - Can change gravity while grappled (feature)
 - Spamming gravity flips can cause some temporary desync of affected players
