@@ -5,6 +5,7 @@ Configs: {
 		Headers: {
 			Triggers: Gravity Flux Triggers
 			Theme: Theme Colors
+			Timing: Timing Header
 		}
 
 		PainFlip: {
@@ -30,6 +31,16 @@ Configs: {
 		PlayerColor: {
 			Label: Player Color
 			Tooltip: Color for player name highlighting
+		}
+
+		GravityDelayMs: {
+			Label: Gravity Delay Ms
+			Tooltip: Delay in milliseconds before gravity swaps after entanglement
+		}
+
+		GravityDelaySeconds: {
+			Label: Gravity Delay Seconds
+			Tooltip: Delay in seconds before gravity swaps after entanglement
 		}
 	}
 }

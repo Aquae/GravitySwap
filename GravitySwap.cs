@@ -150,7 +150,8 @@ namespace GravitySwap
             IsFlipped = isFlipped;
             canSwapGravity = false;
 
-            if (IsFlipped) { await Task.Delay(5000); canSwapGravity = true; UpdateGravity(); }
+            int delayMs = config.GravityDelaySeconds * 1000;
+            if (IsFlipped) { await Task.Delay(delayMs); canSwapGravity = true; UpdateGravity(); }
         }
 
         public void Decoherence()
@@ -393,6 +394,11 @@ namespace GravitySwap
 
         [DefaultValue(false)]
         public bool GravityJump { get; set; }
+
+        [Header("Timing")]
+        [DefaultValue(5)]
+        [Tooltip("Delay in seconds before gravity swaps after entanglement")]
+        public int GravityDelaySeconds { get; set; }
 
         [Header("Theme")]
 
