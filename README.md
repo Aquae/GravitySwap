@@ -1,4 +1,4 @@
-# GravitySwap
+# Gravity Swap
 tModLoader 1.4.4.9 mod
 
 Mod intended for a painful co-op experience.
@@ -18,8 +18,9 @@ Recent Changes:
 - Added a countdown for the effect of the "gravity desync"
 - Customisable countdown
 - Fixed desync bug as host now syncs config to players upon joining
+- Rebuilt for tmodloader v2025.3.3.1
 
 Known bugs/features:
 - Can change gravity while grappled (feature)
 - Spamming gravity flips can cause some temporary desync of affected players
-- Not dying or triggering a gravity flux while playing continiously for ~1.135 years will cause the inverted player to revert to unpolarised gravity until the next flux or death
+- Not dying or triggering a gravity flux while playing continuously for ~1.135 years will cause the inverted player to revert to unpolarised gravity until the next flux or death
