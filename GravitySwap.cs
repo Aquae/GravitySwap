@@ -27,6 +27,7 @@ namespace GravitySwap
         public bool IsFlipped = false;
         public bool IsEntangled => PartnerID != -1 && (Main.player[PartnerID]?.active ?? false);
         private bool JustPressedUp = false;
+        private bool canSwapGravity = false;
 
         public override async void OnEnterWorld()
         {
@@ -86,12 +87,12 @@ namespace GravitySwap
 
         public override void PostHurt(Player.HurtInfo info)
         {
-            if (config.PainFlip && Main.netMode == NetmodeID.MultiplayerClient) { FlipGravity(); }
+            if (canSwapGravity && config.PainFlip && Main.netMode == NetmodeID.MultiplayerClient) { FlipGravity(); }
         }
 
         public override void PreUpdateMovement()
         {
-            if (config.GravityJump && Player.justJumped && Player.whoAmI == Main.myPlayer && Main.netMode == NetmodeID.MultiplayerClient)
+            if (canSwapGravity && config.GravityJump && Player.justJumped && Player.whoAmI == Main.myPlayer && Main.netMode == NetmodeID.MultiplayerClient)
             {
                 FlipGravity();
             }
@@ -144,14 +145,17 @@ namespace GravitySwap
             PartnerID = partnerID;
             Logger.Info($"{Player.name} has entangled with {Main.player[partnerID].name}");
             Main.NewText($"[c/{config.NoticeColor}:Your mass is now quantum entangled with ][c/{config.PlayerColor}:{Main.player[partnerID].name}]");
-            Main.NewText($"[c/{config.WarningColor}:Prepare for gravitational desynchronisation...]");
+            Main.NewText($"[c/{config.WarningColor}: for gravitational desynchronisation...]");
             
             IsFlipped = isFlipped;
-            if (IsFlipped) { await Task.Delay(5000); UpdateGravity(); }
+            canSwapGravity = false;
+
+            if (IsFlipped) { await Task.Delay(5000); canSwapGravity = true; UpdateGravity(); }
         }
 
         public void Decoherence()
         {
+            canSwapGravity = false;
             Logger.Info($"{Player.name} is experiencing decoherence.");
             
             ModPacket packet = Mod.GetPacket();
