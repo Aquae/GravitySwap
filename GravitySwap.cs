@@ -143,23 +143,27 @@ namespace GravitySwap
         
         public async void Entangle(int partnerID, bool isFlipped) {
             int secondsDelay = config.GravityDelaySeconds;
-            PartnerID = partnerID;
-            Logger.Info($"{Player.name} has entangled with {Main.player[partnerID].name}");
-            Main.NewText($"[c/{config.NoticeColor}:Your mass is now quantum entangled with ][c/{config.PlayerColor}:{Main.player[partnerID].name}]");
-            Main.NewText($"[c/{config.WarningColor}: Prepare for gravitational desynchronisation in {secondsDelay}...]");
-            
             IsFlipped = isFlipped;
             canSwapGravity = false;
+            PartnerID = partnerID;
 
-            if (secondsDelay > 3) {
-                await Task.Delay((secondsDelay - 3) * 1000);
-            }
+            Logger.Info($"{Player.name} has entangled with {Main.player[partnerID].name}");
+            Main.NewText($"[c/{config.NoticeColor}:Your mass is now quantum entangled with ][c/{config.PlayerColor}:{Main.player[partnerID].name}]");
+            if (secondsDelay > 1) {
+                Main.NewText($"[c/{config.WarningColor}: Prepare for gravitational desynchronisation in {secondsDelay}...]");
+                if (secondsDelay > 3) {
+                    await Task.Delay((secondsDelay - 3) * 1000);
+                } else { await Task.Delay(1000); }
 
-            int countdownStart = secondsDelay > 3 ? 3 : secondsDelay;
-            for (int t = countdownStart; t >= 1; t--) {
-                if (!IsEntangled) return;
-                Main.NewText($"[c/{config.WarningColor}: {t}...]");
-                await Task.Delay(1000);
+                int countdownStart = secondsDelay > 3 ? 3 : secondsDelay - 1;
+                for (int t = countdownStart; t >= 1; t--) {
+                    if (!IsEntangled) return;
+                    Main.NewText($"[c/{config.WarningColor}: {t}...]");
+                    await Task.Delay(1000);
+                }
+            } else {
+                if (secondsDelay == 1) { await Task.Delay(1000); }
+                Main.NewText($"[c/{config.WarningColor}: Prepare for gravitational desynchronisation...]");
             }
 
             canSwapGravity = IsEntangled;
