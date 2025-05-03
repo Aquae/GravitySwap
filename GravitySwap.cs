@@ -75,7 +75,7 @@ namespace GravitySwap
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                if (IsEntangled && triggersSet.Up && !JustPressedUp && (Player.gravControl || Player.gravControl2) && !Player.pulley)
+                if (canSwapGravity && IsEntangled && triggersSet.Up && !JustPressedUp && (Player.gravControl || Player.gravControl2) && !Player.pulley)
                 {
                     Player.gravDir = IsFlipped ? -1f : 1f;
                     FlipGravity();
@@ -142,16 +142,28 @@ namespace GravitySwap
         }
         
         public async void Entangle(int partnerID, bool isFlipped) {
+            int secondsDelay = config.GravityDelaySeconds;
             PartnerID = partnerID;
             Logger.Info($"{Player.name} has entangled with {Main.player[partnerID].name}");
             Main.NewText($"[c/{config.NoticeColor}:Your mass is now quantum entangled with ][c/{config.PlayerColor}:{Main.player[partnerID].name}]");
-            Main.NewText($"[c/{config.WarningColor}: Prepare for gravitational desynchronisation...]");
+            Main.NewText($"[c/{config.WarningColor}: Prepare for gravitational desynchronisation in {secondsDelay}...]");
             
             IsFlipped = isFlipped;
             canSwapGravity = false;
 
-            int delayMs = config.GravityDelaySeconds * 1000;
-            if (IsFlipped) { await Task.Delay(delayMs); canSwapGravity = true; UpdateGravity(); }
+            if (secondsDelay > 3) {
+                await Task.Delay((secondsDelay - 3) * 1000);
+            }
+
+            int countdownStart = secondsDelay > 3 ? 3 : secondsDelay;
+            for (int t = countdownStart; t >= 1; t--) {
+                if (!IsEntangled) return;
+                Main.NewText($"[c/{config.WarningColor}: {t}...]");
+                await Task.Delay(1000);
+            }
+
+            canSwapGravity = IsEntangled;
+            if (IsFlipped) { UpdateGravity(); }
         }
 
         public void Decoherence()
@@ -354,6 +366,31 @@ namespace GravitySwap
                 }
             }
 
+            private void HandleConfigRequest(BinaryReader reader, int whoAmI)
+            {
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    Axiom config = ModContent.GetInstance<Axiom>();
+                    ModPacket packet = GetPacket();
+                    packet.Write((byte)MessageType.ConfigSync);
+                    packet.Write(config.GravityDelaySeconds);
+                    packet.Write(config.PainFlip);
+                    packet.Write(config.GravityJump);
+                    packet.Send(toClient: whoAmI);
+                }
+            }
+
+            private void HandleConfigSync(BinaryReader reader, int whoAmI)
+            {
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    Axiom config = ModContent.GetInstance<Axiom>();
+                    config.GravityDelaySeconds = reader.ReadInt32();
+                    config.PainFlip = reader.ReadBoolean();
+                    config.GravityJump = reader.ReadBoolean();
+                }
+            }
+
             public override void HandlePacket(BinaryReader reader, int whoAmI)
             {
                 MessageType msgType = (MessageType) reader.ReadByte();
@@ -379,11 +416,15 @@ namespace GravitySwap
                     case MessageType.SyncResponse:
                         HandleSyncResponse(reader, whoAmI);
                         break;
+                        
+                    case MessageType.ConfigSync:
+                        HandleConfigSync(reader, whoAmI);
+                        break;
                 }
             }
     }
 
-    public class Axiom : ModConfig
+public class Axiom : ModConfig
     {
         public override ConfigScope Mode => ConfigScope.ServerSide;
 
@@ -418,6 +459,8 @@ namespace GravitySwap
         Flux,
         Rizz,
         SyncRequest,
-        SyncResponse
+        SyncResponse,
+        ConfigRequest,
+        ConfigSync
     }
 }
