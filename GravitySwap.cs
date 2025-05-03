@@ -145,7 +145,7 @@ namespace GravitySwap
             PartnerID = partnerID;
             Logger.Info($"{Player.name} has entangled with {Main.player[partnerID].name}");
             Main.NewText($"[c/{config.NoticeColor}:Your mass is now quantum entangled with ][c/{config.PlayerColor}:{Main.player[partnerID].name}]");
-            Main.NewText($"[c/{config.WarningColor}: for gravitational desynchronisation...]");
+            Main.NewText($"[c/{config.WarningColor}: Prepare for gravitational desynchronisation...]");
             
             IsFlipped = isFlipped;
             canSwapGravity = false;
